@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import { Sidebar } from './(shell)/sidebar';
+import { Header } from './(shell)/header';
+import ReactQueryProvider from '@/providers/react-query.provider';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({
@@ -89,11 +92,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground flex min-h-screen antialiased`}
-      >
-        {children}
-      </body>
+      <ReactQueryProvider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground flex min-h-screen antialiased`}
+        >
+          <Sidebar />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <Header />
+            <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+              {children}
+            </main>
+          </div>
+        </body>
+      </ReactQueryProvider>
     </html>
   );
 }
