@@ -41,6 +41,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-up: var(--up);
+  --color-up-glow: var(--up-glow);
+  --color-down: var(--down);
+  --color-down-glow: var(--down-glow);
+  --color-neon: var(--neon);
+  --color-neon-glow: var(--neon-glow);
 }
 
 :root {
@@ -76,6 +82,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --up: #399cff;
+  --up-glow: #5bb3ff;
+  --down: #ff3344;
+  --down-glow: #ff6675;
+  --neon: #39ffd0;
+  --neon-glow: #59ffe0;
 }
 
 .dark {
@@ -110,6 +122,12 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --up: #5bb3ff;
+  --up-glow: #7ac6ff;
+  --down: #ff6675;
+  --down-glow: #ff8894;
+  --neon: #2ad9bd;
+  --neon-glow: #47e5ca;
 }
 
 @layer base {
@@ -118,5 +136,24 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  .text-up {
+    color: var(--up);
+  }
+  .text-down {
+    color: var(--down);
+  }
+}
+
+@layer utilities {
+  .glow {
+    @apply drop-shadow-neon;
+    --tw-shadow-color: var(--neon-glow);
+  }
+  .glow-up {
+    --tw-shadow-color: var(--up-glow);
+  }
+  .glow-down {
+    --tw-shadow-color: var(--down-glow);
   }
 }
