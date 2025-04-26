@@ -8,15 +8,17 @@ type GetAllDebatesProps = {
   size?: number;
 };
 
-export const getAllDebates = cache(async (params: GetAllDebatesProps) => {
-  const query = buildQuery(params);
+export const getAllDebates = cache(
+  async ({ page = 1, size = 10 }: GetAllDebatesProps) => {
+    const query = buildQuery({ page, size });
 
-  const json = await apiFetch(`/debates${query}`, {
-    schema: debatePageSuccessSchema,
-    init: {
-      method: 'GET',
-    },
-  });
+    const json = await apiFetch(`/debates${query}`, {
+      schema: debatePageSuccessSchema,
+      init: {
+        method: 'GET',
+      },
+    });
 
-  return json;
-});
+    return json;
+  },
+);

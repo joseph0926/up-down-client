@@ -9,6 +9,8 @@ import { getAllDebates } from '@/services/debate.service';
 import { DebateCardSkeleton } from './debate-skeleton';
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll';
 
+const PAGE_SIZE = 10;
+
 type Props = {
   allDebatePromise: Promise<DebatePageSuccessSchema>;
 };
@@ -24,7 +26,7 @@ export const SidebarDebateList = ({ allDebatePromise }: Props) => {
         ? last.data.page + 1
         : undefined,
     queryFn: ({ pageParam = 1 }) =>
-      getAllDebates({ page: pageParam, size: 20 }),
+      getAllDebates({ page: pageParam, size: PAGE_SIZE }),
     initialPageParam: 1,
   });
 

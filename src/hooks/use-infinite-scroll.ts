@@ -19,6 +19,7 @@ export const useInfiniteScroll = (
   const handleIntersect: IntersectionObserverCallback = useCallback(
     (entries) => {
       const [entry] = entries;
+
       if (entry.isIntersecting && !disabled) {
         onReachBottom();
       }

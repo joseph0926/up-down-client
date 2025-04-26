@@ -5,8 +5,10 @@ import { Sidebar } from '../ui/sidebar';
 import { SidebarDebateList } from './debate-list';
 import { DebateListSkeleton } from './debate-skeleton';
 
+const PAGE_SIZE = 10;
+
 export const SidebarWrapper = () => {
-  const allDebatePromise = getAllDebates({});
+  const allDebatePromise = getAllDebates({ page: 1, size: PAGE_SIZE });
 
   return (
     <Sidebar isOpen width={255} showOverlay={false} className="pl-2">

@@ -19,7 +19,7 @@ export async function apiFetch<T>(
   } = {},
 ): Promise<T> {
   try {
-    const res = await fetch(`${env.SERVER_URL}${path}`, {
+    const res = await fetch(`${env.NEXT_PUBLIC_SERVER_URL}${path}`, {
       ...init,
       cache,
       next: { revalidate, tags },
