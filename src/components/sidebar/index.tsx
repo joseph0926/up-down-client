@@ -3,15 +3,15 @@ import { Suspense } from 'react';
 import { getAllDebates } from '@/services/debate.service';
 import { Sidebar } from '../ui/sidebar';
 import { SidebarDebateList } from './debate-list';
-import { DebateCardSkeleton } from './debate-skeleton';
+import { DebateListSkeleton } from './debate-skeleton';
 
 export const SidebarWrapper = () => {
   const allDebatePromise = getAllDebates({});
 
   return (
-    <Sidebar width={255} showOverlay={false} className="pl-2">
+    <Sidebar isOpen width={255} showOverlay={false} className="pl-2">
       <Logo />
-      <Suspense fallback={<DebateCardSkeleton />}>
+      <Suspense fallback={<DebateListSkeleton />}>
         <SidebarDebateList allDebatePromise={allDebatePromise} />
       </Suspense>
     </Sidebar>

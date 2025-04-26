@@ -6,6 +6,7 @@ import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface SidebarProps {
+  isOpen?: boolean;
   side?: 'left' | 'right';
   width?: number | string;
   showOverlay?: boolean;
@@ -16,14 +17,20 @@ export interface SidebarProps {
 const DEFAULT_WIDTH = 320;
 
 export function Sidebar({
+  isOpen = true,
   side = 'left',
   width = DEFAULT_WIDTH,
   showOverlay = true,
   className,
   children,
 }: SidebarProps) {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(isOpen);
+  const firstRenderRef = useRef(true);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    firstRenderRef.current = false;
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -44,17 +51,26 @@ export function Sidebar({
     </button>
   );
 
+  const slideInitial: false | { x: string } = firstRenderRef.current
+    ? false
+    : { x: side === 'left' ? '-100%' : '100%' };
+
+  const overlayInitial: false | { opacity: number } = firstRenderRef.current
+    ? false
+    : { opacity: 0 };
+
   return (
     <>
-      {Trigger}
-      <AnimatePresence>
+      {!open && Trigger}
+
+      <AnimatePresence initial={false}>
         {open && (
           <>
             {showOverlay && (
               <motion.div
                 key="overlay"
                 className="fixed inset-0 z-40 bg-black/50"
-                initial={{ opacity: 0 }}
+                initial={overlayInitial}
                 animate={{ opacity: 0.5 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
@@ -74,7 +90,7 @@ export function Sidebar({
                 className,
               )}
               style={typeof width === 'number' ? { width } : undefined}
-              initial={{ x: side === 'left' ? '-100%' : '100%' }}
+              initial={slideInitial}
               animate={{ x: 0 }}
               exit={{ x: side === 'left' ? '-100%' : '100%' }}
               transition={{ type: 'spring', stiffness: 400, damping: 40 }}
@@ -82,6 +98,7 @@ export function Sidebar({
               <button
                 onClick={() => setOpen(false)}
                 className="focus-visible:ring-primary absolute top-4 right-4 cursor-pointer rounded-full p-2 hover:bg-gray-100"
+                aria-label="Close sidebar"
               >
                 <X className="h-5 w-5" />
               </button>
