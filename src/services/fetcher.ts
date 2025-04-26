@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { config } from '@/lib/env';
 import { ApiError } from './api-error';
+import { env } from '@/lib/env';
 
 export async function apiFetch<T>(
   path: string,
@@ -19,7 +19,7 @@ export async function apiFetch<T>(
   } = {},
 ): Promise<T> {
   try {
-    const res = await fetch(`${config.SERVER_URL}${path}`, {
+    const res = await fetch(`${env.SERVER_URL}${path}`, {
       ...init,
       cache,
       next: { revalidate, tags },

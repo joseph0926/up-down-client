@@ -28,3 +28,5 @@ export type DebateDetail = z.infer<typeof debateDetailSchema>;
 
 export const debateList200Schema = paginated(debateSummarySchema);
 export const debatePageSuccessSchema = apiSuccess(debateList200Schema);
+
+export type DebatePageSuccessSchema = z.infer<typeof debatePageSuccessSchema>;

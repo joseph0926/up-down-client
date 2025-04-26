@@ -1,19 +1,16 @@
-import { config as dotenvConfig } from 'dotenv';
-import { cleanEnv, str } from 'envalid';
-import { resolve } from 'node:path';
+import { z } from 'zod';
+import { createEnv } from '@t3-oss/env-nextjs';
 
-const ENV = process.env.NODE_ENV ?? 'development';
-
-dotenvConfig({
-  path: resolve(process.cwd(), `.env.${ENV}.local`),
-  override: true,
+export const env = createEnv({
+  server: {
+    NODE_ENV: z.enum(['development', 'production']),
+    SERVER_URL: z.string().url(),
+  },
+  client: {
+    NEXT_PUBLIC_CLIENT_URL: z.string().url(),
+  },
+  experimental__runtimeEnv: {
+    NEXT_PUBLIC_CLIENT_URL: process.env.NEXT_PUBLIC_CLIENT_URL,
+  },
 });
-dotenvConfig({ path: resolve(process.cwd(), `.env.${ENV}`), override: false });
-dotenvConfig({ path: resolve(process.cwd(), '.env'), override: false });
-
-export const config = cleanEnv(process.env, {
-  NODE_ENV: str({ choices: ['development', 'production'] }),
-  CLIENT_URL: str(),
-  SERVER_URL: str(),
-} as const);
-export type Env = Readonly<typeof config>;
+export type Env = typeof env;

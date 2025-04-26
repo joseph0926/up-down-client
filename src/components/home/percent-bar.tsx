@@ -1,10 +1,3 @@
-/*
-  src/components/percent-bar.tsx  — 개선 버전 (date‑fns + cn)
-  추가 파일:
-    📁 src/utils/time.ts   → formatRemaining() & clampPct()
-  ※ util 파일은 별도 작성 필요.
-*/
-
 'use client';
 
 import { motion } from 'motion/react';

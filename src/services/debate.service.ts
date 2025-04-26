@@ -1,8 +1,17 @@
 import { debatePageSuccessSchema } from '@/schemas/debate.schema';
 import { apiFetch } from './fetcher';
+import { cache } from 'react';
+import { buildQuery } from '@/lib/query-params';
 
-export const getAllDebate = async () => {
-  const json = await apiFetch('/debates', {
+type GetAllDebatesProps = {
+  page?: number;
+  size?: number;
+};
+
+export const getAllDebates = cache(async (params: GetAllDebatesProps) => {
+  const query = buildQuery(params);
+
+  const json = await apiFetch(`/debates${query}`, {
     schema: debatePageSuccessSchema,
     init: {
       method: 'GET',
@@ -10,4 +19,4 @@ export const getAllDebate = async () => {
   });
 
   return json;
-};
+});
