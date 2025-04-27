@@ -1,27 +1,35 @@
 import { z } from 'zod';
 
-export const paginated = <T extends z.ZodTypeAny>(item: T) =>
+export const ApiSuccess = <T extends z.ZodTypeAny>(data: T) =>
+  z.object({
+    data,
+    success: z.literal(true),
+    message: z.string().optional(),
+  });
+
+export const ApiFail = z.object({
+  data: z.null(),
+  success: z.literal(false),
+  message: z.string(),
+});
+
+export const ApiResponse = <T extends z.ZodTypeAny>(data: T) =>
+  z.union([ApiSuccess(data), ApiFail]);
+
+export type ApiSuccess<T extends z.ZodTypeAny> = z.infer<
+  ReturnType<typeof ApiSuccess<T>>
+>;
+export type ApiFail = z.infer<typeof ApiFail>;
+export type ApiResponseT<T extends z.ZodTypeAny> = ApiSuccess<T> | ApiFail;
+
+export const CursorList = <T extends z.ZodTypeAny>(item: T) =>
   z.object({
     items: z.array(item),
-    total: z.number().int().nonnegative(),
-    page: z.number().int().positive(),
-    size: z.number().int().positive(),
+    nextCursor: z.string().nullable(),
   });
-
-export const apiSuccess = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    success: z.literal(true),
-    data: dataSchema,
-    message: z.string(),
-  });
-export type ApiSuccess<T extends z.ZodTypeAny> = z.infer<
-  ReturnType<typeof apiSuccess<T>>
+export type CursorListT<T extends z.ZodTypeAny> = z.infer<
+  ReturnType<typeof CursorList<T>>
 >;
 
-export const failSchema = z.object({
-  success: z.literal(false),
-  code: z.string(),
-  message: z.string(),
-  data: z.null(),
-});
-export type ApiFail = z.infer<typeof failSchema>;
+export const OkSchema = z.object({ ok: z.literal(true) });
+export type TOk = z.infer<typeof OkSchema>;

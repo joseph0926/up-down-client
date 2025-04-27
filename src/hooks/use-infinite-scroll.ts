@@ -5,6 +5,7 @@ export interface InfiniteScrollOptions extends IntersectionObserverInit {
 }
 
 export const useInfiniteScroll = (
+  hasNextPage: boolean,
   onReachBottom: () => void,
   options: InfiniteScrollOptions = {},
 ) => {

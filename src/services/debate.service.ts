@@ -1,24 +1,63 @@
-import { debatePageSuccessSchema } from '@/schemas/debate.schema';
-import { apiFetch } from './fetcher';
-import { cache } from 'react';
-import { buildQuery } from '@/lib/query-params';
+import { ApiResponse, OkSchema } from '@/schemas/common.schema';
+import {
+  DebateList,
+  DebateDetail,
+  ResAddComment,
+} from '@/schemas/debate.schema';
+import { TCreateDebate, TCommentBody } from '@/types/debate.type';
+import { fetchJson } from './fetch-json';
+import { API, handleError } from './api';
 
-type GetAllDebatesProps = {
-  page?: number;
-  size?: number;
-};
+export async function fetchHot(limit = 10, cursor?: string) {
+  const qs = new URLSearchParams({ sort: 'hot', limit: String(limit) });
+  if (cursor) qs.append('cursor', cursor);
 
-export const getAllDebates = cache(
-  async ({ page = 1, size = 10 }: GetAllDebatesProps) => {
-    const query = buildQuery({ page, size });
+  return fetchJson<typeof DebateList>(
+    `${API}/debates?${qs}`,
+    ApiResponse(DebateList),
+    {
+      next: { revalidate: 30, tags: ['debates', 'hot'] },
+    },
+  ).catch(handleError);
+}
 
-    const json = await apiFetch(`/debates${query}`, {
-      schema: debatePageSuccessSchema,
-      init: {
-        method: 'GET',
-      },
-    });
+export async function fetchDebate(id: string) {
+  return fetchJson<typeof DebateDetail>(
+    `${API}/debates/${id}`,
+    ApiResponse(DebateDetail),
+    {
+      next: { revalidate: 5, tags: [`debate:${id}`] },
+    },
+  ).catch(handleError);
+}
 
-    return json;
-  },
-);
+export async function createDebate(body: TCreateDebate) {
+  const data = await fetchJson<typeof OkSchema>(
+    `${API}/debates`,
+    ApiResponse(OkSchema),
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+    },
+  ).catch(handleError);
+
+  import('next/cache').then((c) => {
+    c.revalidateTag('debates');
+    c.revalidateTag('hot');
+  });
+  return data;
+}
+
+export async function addComment(body: TCommentBody) {
+  const res = await fetchJson(`${API}/debates/comment`, ResAddComment, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    cache: 'no-store',
+  }).catch(handleError);
+
+  import('next/cache').then((c) => c.revalidateTag(`debate:${body.debateId}`));
+  return res;
+}
