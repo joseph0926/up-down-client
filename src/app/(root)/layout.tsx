@@ -1,7 +1,7 @@
-export default function MainLayout({
+export default function RootGroupLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  return <main>{children}</main>;
+}) {
+  return <main className="mx-auto max-w-6xl p-6">{children}</main>;
 }

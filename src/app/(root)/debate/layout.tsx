@@ -1,12 +1,14 @@
-import { SidebarWrapper } from '@/components/sidebar';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default function DebateLayout({
+export default function DebateGroupLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <>
-      <SidebarWrapper />
-      <main>{children}</main>
-    </>
+    <Suspense fallback={<Skeleton className="h-40 w-full" />}>
+      {children}
+    </Suspense>
   );
 }

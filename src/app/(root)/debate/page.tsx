@@ -1,3 +1,5 @@
-export default function DebatePage() {
-  return <div>tset</div>;
+import { redirect } from 'next/navigation';
+
+export default function DebateIndex() {
+  redirect('/#sidebar');
 }

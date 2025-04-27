@@ -18,19 +18,20 @@ type Props = {
 export const SidebarDebateList = ({ allDebatePromise }: Props) => {
   const firstPage = use(allDebatePromise);
 
-  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: QUERY_KEY.DEBATE.ALL,
-    initialData: { pages: [firstPage], pageParams: [1] },
-    getNextPageParam: (last) =>
-      last.data.page * last.data.size < last.data.total
-        ? last.data.page + 1
-        : undefined,
-    queryFn: ({ pageParam = 1 }) =>
-      getAllDebates({ page: pageParam, size: PAGE_SIZE }),
-    initialPageParam: 1,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: QUERY_KEY.DEBATE.ALL,
+      initialData: { pages: [firstPage], pageParams: [1] },
+      getNextPageParam: (last) =>
+        last.data.page * last.data.size < last.data.total
+          ? last.data.page + 1
+          : undefined,
+      queryFn: ({ pageParam = 1 }) =>
+        getAllDebates({ page: pageParam, size: PAGE_SIZE }),
+      initialPageParam: 1,
+    });
 
-  const { sentinelRef } = useInfiniteScroll(fetchNextPage);
+  const { sentinelRef } = useInfiniteScroll(hasNextPage, fetchNextPage);
 
   return (
     <ul className="mt-4 flex flex-col gap-3 pr-2">
