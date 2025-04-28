@@ -61,3 +61,16 @@ export async function addComment(body: TCommentBody) {
   import('next/cache').then((c) => c.revalidateTag(`debate:${body.debateId}`));
   return res;
 }
+
+export async function addVote(body: { debateId: string; side: 'PRO' | 'CON' }) {
+  return fetchJson<typeof OkSchema>(
+    `${API}/debates/vote`,
+    ApiResponse(OkSchema),
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+    },
+  ).catch(handleError);
+}

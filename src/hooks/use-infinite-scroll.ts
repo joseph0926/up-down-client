@@ -21,11 +21,11 @@ export const useInfiniteScroll = (
     (entries) => {
       const [entry] = entries;
 
-      if (entry.isIntersecting && !disabled) {
+      if (entry.isIntersecting && !disabled && hasNextPage) {
         onReachBottom();
       }
     },
-    [onReachBottom, disabled],
+    [onReachBottom, disabled, hasNextPage],
   );
 
   useEffect(() => {

@@ -1,36 +1,31 @@
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { fetchDebate } from '@/services/debate.service';
+import { DetailBody } from '../components/detail-body';
 
 export default async function DebateDetail({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const data = await fetchDebate(params.id).catch(() => null);
-  if (!data) return notFound();
+  const { id } = await params;
 
-  const CommentStream = dynamic(
-    () => import('@/components/debate/comment-stream'),
-    { ssr: false },
+  const debate = await fetchDebate(id).catch(() => null);
+  if (!debate) return notFound();
+
+  const VoteButtons = dynamic(
+    () => import('@/app/(root)/debate/components/vote-buttons'),
   );
+  // const CommentStream = dynamic(
+  //   () => import('@/app/(root)/debate/components/comment-stream'),
+  //   { ssr: false },
+  // );
 
   return (
-    <article className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-bold">{data.title}</h1>
-        <p className="text-muted-foreground text-sm">
-          마감 {new Date(data.deadline).toLocaleDateString()}
-        </p>
-      </header>
-
-      <section dangerouslySetInnerHTML={{ __html: data.content ?? '' }} />
-      <VoteButtons debate={data} />
-      <CommentStream debateId={data.id} />
-    </article>
+    <>
+      <DetailBody data={debate} />
+      <VoteButtons debate={debate} />
+      {/* <CommentStream debateId={debate.id} /> */}
+    </>
   );
 }
-
-const VoteButtons = dynamic(() => import('@/components/debate/vote-buttons'), {
-  ssr: false,
-});
