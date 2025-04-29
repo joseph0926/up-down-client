@@ -1,6 +1,4 @@
 import { QUERY_KEY } from '@/lib/query/query-key';
-import { ApiResponse } from '@/schemas/common.schema';
-import { DebateList, ResDebateList } from '@/schemas/debate.schema';
 import { SortType, TDebateDetail } from '@/types/debate.type';
 import {
   useInfiniteQuery,
@@ -8,25 +6,21 @@ import {
   useMutation,
   QueryClient,
 } from '@tanstack/react-query';
-import { fetchJson } from './fetch-json';
-import { API } from './api';
 import {
   addComment,
   addVote,
   createDebate,
   fetchDebate,
+  fetchDebates,
 } from './debate.service';
 
 const queryClient = new QueryClient();
 
-export function useInfiniteDebates(sort: SortType, limit = 12) {
+export function useInfiniteDebates(sort: SortType, limit: number = 10) {
   return useInfiniteQuery({
     queryKey: QUERY_KEY.DEBATE.ALL(sort, limit),
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
-      fetchJson<typeof ResDebateList>(
-        `${API}/debates?sort=${sort}&limit=${limit}${pageParam ? `&cursor=${pageParam}` : ''}`,
-        ApiResponse(DebateList),
-      ),
+      fetchDebates({ pageParam, sort, limit }),
     getNextPageParam: (last) => last.nextCursor ?? undefined,
     staleTime: 30_000,
     initialPageParam: undefined,

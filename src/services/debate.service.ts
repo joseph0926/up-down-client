@@ -3,12 +3,31 @@ import {
   DebateList,
   DebateDetail,
   ResAddComment,
+  ResDebateList,
 } from '@/schemas/debate.schema';
-import { TCreateDebate, TCommentBody } from '@/types/debate.type';
+import { TCreateDebate, TCommentBody, SortType } from '@/types/debate.type';
 import { fetchJson } from './fetch-json';
 import { API, handleError } from './api';
 
-export async function fetchHot(limit = 10, cursor?: string) {
+export async function fetchDebates({
+  pageParam,
+  sort,
+  limit = 10,
+}: {
+  pageParam: string | undefined;
+  sort: SortType;
+  limit: number;
+}) {
+  const qs = new URLSearchParams({ sort, limit: String(limit) });
+  if (pageParam) qs.append('cursor', pageParam);
+
+  return fetchJson<typeof ResDebateList>(
+    `${API}/debates?${qs}`,
+    ApiResponse(DebateList),
+  );
+}
+
+export async function fetchHot(limit = 5, cursor?: string) {
   const qs = new URLSearchParams({ sort: 'hot', limit: String(limit) });
   if (cursor) qs.append('cursor', cursor);
 
