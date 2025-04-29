@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import ReactQueryProvider from '@/providers/react-query.provider';
-import { Logo } from '@/components/common/logo';
+import { cn } from '@/lib/utils';
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+const pretendard = localFont({
+  src: './fonts/PretendardVariable.woff2',
+  display: 'swap',
+  weight: '45 920',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -91,15 +92,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="bg-background min-h-screen antialiased">
-        <ReactQueryProvider>
-          <header className="border-b">
-            <div className="mx-auto flex max-w-6xl items-center p-4">
-              <Logo />
-            </div>
-          </header>
-          {children}
-        </ReactQueryProvider>
+      <body className={cn(pretendard.className, 'min-h-screen antialiased')}>
+        <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
     </html>
   );

@@ -1,0 +1,22 @@
+{
+  "name": "Up & Down",
+  "short_name": "UpDown",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#399CFF",
+  "description": "실시간 찬반 토론 플랫폼",
+  "icons": [
+    {
+      "src": "/icons/icon.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "/icons/icon.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
