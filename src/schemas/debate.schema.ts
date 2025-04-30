@@ -4,6 +4,7 @@ import { ApiSuccess, CursorList } from './common.schema';
 export const DebateSidebarItem = z.object({
   id: z.string(),
   title: z.string(),
+  content: z.string(),
   status: z.enum(['upcoming', 'ongoing', 'closed']),
   deadline: z.string().datetime(),
   dDay: z.number().int(),

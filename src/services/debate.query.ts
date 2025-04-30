@@ -23,10 +23,12 @@ export function useInfiniteDebates(sort: SortType, limit: number = 10) {
       fetchDebates({ pageParam, sort, limit }),
     getNextPageParam: (last) => {
       if (!last) return undefined;
-      last.nextCursor ?? undefined;
+      return last.nextCursor ?? undefined;
     },
     staleTime: 30_000,
     initialPageParam: undefined,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }
 
