@@ -14,7 +14,7 @@ export async function fetchDebates({
   sort,
   limit = 10,
 }: {
-  pageParam: string | undefined;
+  pageParam?: string;
   sort: SortType;
   limit: number;
 }) {
@@ -24,7 +24,7 @@ export async function fetchDebates({
   return fetchJson<typeof ResDebateList>(
     `${API}/debates?${qs}`,
     ApiResponse(DebateList),
-  );
+  ).catch(handleError);
 }
 
 export async function fetchHot(limit = 5, cursor?: string) {

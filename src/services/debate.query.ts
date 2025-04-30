@@ -21,7 +21,10 @@ export function useInfiniteDebates(sort: SortType, limit: number = 10) {
     queryKey: QUERY_KEY.DEBATE.ALL(sort, limit),
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
       fetchDebates({ pageParam, sort, limit }),
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
+    getNextPageParam: (last) => {
+      if (!last) return undefined;
+      last.nextCursor ?? undefined;
+    },
     staleTime: 30_000,
     initialPageParam: undefined,
   });
