@@ -21,6 +21,7 @@ import { SidebarDebateErrorFallback } from '../error/sidebar-debate.error';
 import { SidebarProgress } from './sidebar-progress';
 import { cn } from '@/lib/utils';
 import { SidebarMoreIndicator } from './sidebar-more-indicator';
+import Link from 'next/link';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -61,7 +62,7 @@ export const SidebarDebatesClient = () => {
 
   return (
     <>
-      <div className="h-full overflow-y-auto">
+      <div className="h-full overflow-y-auto pr-2">
         {(['upcoming', 'ongoing', 'closed'] as Status[]).map((statusKey) =>
           grouped[statusKey].length ? (
             <section key={statusKey} className="mb-4">
@@ -83,49 +84,51 @@ export const SidebarDebatesClient = () => {
                       )}
                     >
                       <SidebarMenuButton asChild>
-                        <motion.div
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 300,
-                            damping: 30,
-                          }}
-                          className={cn(
-                            'flex w-full items-center gap-2 px-2',
-                            isClosed && 'pointer-events-none',
-                          )}
-                        >
-                          {d.thumbUrl ? (
-                            <Image
-                              src={d.thumbUrl}
-                              alt={d.title}
-                              width={32}
-                              height={32}
-                              className="h-8 w-8 shrink-0 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium">
-                              {d.title}
-                            </p>
-                            <div className="flex items-center gap-1 text-[11px] text-gray-500">
-                              <span>
-                                {d.dDay > 0
-                                  ? `${d.dDay}일 남음`
-                                  : d.dDay === 0
-                                    ? '오늘 마감'
-                                    : `${Math.abs(d.dDay)}일 지남`}
-                              </span>
-                              <span>·</span>
-                              <span className="flex items-center gap-0.5">
-                                💬 {d.commentCount}
-                              </span>
+                        <Link href={`/debate/${d.id}`}>
+                          <motion.div
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              type: 'spring',
+                              stiffness: 300,
+                              damping: 30,
+                            }}
+                            className={cn(
+                              'flex w-full items-center gap-2 px-2',
+                              isClosed && 'pointer-events-none',
+                            )}
+                          >
+                            {d.thumbUrl ? (
+                              <Image
+                                src={d.thumbUrl}
+                                alt={d.title}
+                                width={32}
+                                height={32}
+                                className="h-8 w-8 shrink-0 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-medium">
+                                {d.title}
+                              </p>
+                              <div className="flex items-center gap-1 text-[11px] text-gray-500">
+                                <span>
+                                  {d.dDay > 0
+                                    ? `${d.dDay}일 남음`
+                                    : d.dDay === 0
+                                      ? '오늘 마감'
+                                      : `${Math.abs(d.dDay)}일 지남`}
+                                </span>
+                                <span>·</span>
+                                <span className="flex items-center gap-0.5">
+                                  💬 {d.commentCount}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        </motion.div>
+                          </motion.div>
+                        </Link>
                       </SidebarMenuButton>
                       <SidebarMenuSub className="w-full">
                         <SidebarMenuSubItem>
