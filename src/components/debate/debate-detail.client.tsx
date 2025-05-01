@@ -1,16 +1,20 @@
 'use client';
 
-import { DebateVoteBar } from './debate-vote-bar';
-import { Button } from '@/components/ui/button';
+import { useRef } from 'react';
 import { motion } from 'motion/react';
 import { useDebate } from '@/services/debate.query';
-import { DebateDetailSkeleton } from '../loading/debate-detail.loading';
+import { DebateVoteBar } from './debate-vote-bar';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { CommentInput } from '../commnet/comment-input';
+import { CommentList } from '../commnet/comment-list';
 
 export const DebateDetailClient = ({ debateId }: { debateId: string }) => {
   const { data, status } = useDebate(debateId);
+  const proRef = useRef<HTMLInputElement>(null);
+  const conRef = useRef<HTMLInputElement>(null);
 
-  if (status === 'pending') return <DebateDetailSkeleton />;
-  if (status === 'error') return <DebateDetailError />;
+  if (status === 'error') return <DetailError />;
 
   const {
     content,
@@ -21,50 +25,68 @@ export const DebateDetailClient = ({ debateId }: { debateId: string }) => {
     conCount,
   } = data!;
 
+  const focusInput = (side: 'PRO' | 'CON') =>
+    (side === 'PRO' ? proRef.current : conRef.current)?.scrollIntoView({
+      behavior: 'smooth',
+    });
+
   return (
     <>
       <DebateVoteBar proRatio={proRatio} conRatio={conRatio} />
       {debateStatus === 'ongoing' && (
-        <div className="my-6 flex gap-4">
-          <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
+        <div className="my-6 grid grid-cols-2 gap-3">
+          <motion.div whileTap={{ scale: 0.96 }}>
             <Button
-              size="lg"
-              className="w-full bg-blue-600 text-white hover:bg-blue-700"
-              onClick={() => vote('PRO')}
+              className={cn('w-full bg-blue-600 text-white hover:bg-blue-700')}
+              onClick={() => focusInput('PRO')}
             >
-              👍 찬성 ({proCount})
+              ✍️ 찬성 의견 쓰기 ({proCount})
             </Button>
           </motion.div>
-          <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
+          <motion.div whileTap={{ scale: 0.96 }}>
             <Button
-              size="lg"
               variant="destructive"
               className="w-full"
-              onClick={() => vote('CON')}
+              onClick={() => focusInput('CON')}
             >
-              👎 반대 ({conCount})
+              ✍️ 반대 의견 쓰기 ({conCount})
             </Button>
           </motion.div>
         </div>
       )}
+
       {content && (
-        <article className="prose prose-sm max-w-none py-4">
-          <div dangerouslySetInnerHTML={{ __html: content }} />
-        </article>
+        <article
+          className="prose prose-sm max-w-none py-4"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
       )}
-      <h2 className="mt-8 mb-2 text-lg font-semibold">댓글</h2>
-      {/* <CommentInput debateId={id} />
-      <CommentList debateId={id} /> */}
+
+      <section className="mt-10 space-y-6">
+        <h2 className="text-lg font-semibold">댓글</h2>
+
+        <CommentInput
+          scrollAnchor={proRef}
+          debateId={debateId}
+          side="PRO"
+          placeholder="찬성 의견을 남겨주세요"
+        />
+        <CommentList debateId={debateId} side="PRO" />
+
+        <CommentInput
+          scrollAnchor={conRef}
+          debateId={debateId}
+          side="CON"
+          placeholder="반대 의견을 남겨주세요"
+        />
+        <CommentList debateId={debateId} side="CON" />
+      </section>
     </>
   );
 };
 
-const DebateDetailError = () => (
-  <div className="flex h-full items-center justify-center">
-    <p className="text-gray-500">토론 정보를 불러오지 못했습니다.</p>
-  </div>
+const DetailError = () => (
+  <p className="text-center text-sm text-red-500">
+    토론 정보를 불러오지 못했습니다.
+  </p>
 );
-
-async function vote(side: 'PRO' | 'CON') {
-  /* 추후 mutate 로직 */
-}

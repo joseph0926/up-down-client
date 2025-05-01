@@ -1,96 +1,51 @@
-import { ApiResponse, OkSchema } from '@/schemas/common.schema';
-import {
-  DebateList,
-  DebateDetail,
-  ResAddComment,
-  ResDebateList,
-} from '@/schemas/debate.schema';
-import { TCreateDebate, TCommentBody, SortType } from '@/types/debate.type';
+import { z } from 'zod';
 import { fetchJson } from './fetch-json';
-import { API, handleError } from './api';
-import { cache } from 'react';
+import { API } from './api';
+import {
+  ResDebateDetail,
+  ResDebateList,
+  CreateDebateBody,
+  ResCreateDebate,
+} from '@/schemas/debate.schema';
 
-export async function fetchDebates({
-  pageParam,
-  sort,
-  limit = 10,
-}: {
-  pageParam?: string;
-  sort: SortType;
+export async function fetchDebates(opts: {
+  sort: 'hot' | 'imminent' | 'latest';
   limit: number;
+  pageParam?: string;
 }) {
+  const { sort, limit, pageParam } = opts;
   const qs = new URLSearchParams({ sort, limit: String(limit) });
   if (pageParam) qs.append('cursor', pageParam);
 
-  return fetchJson<typeof ResDebateList>(
-    `${API}/debates?${qs}`,
-    ApiResponse(DebateList),
-  ).catch(handleError);
+  return fetchJson(`${API}/debates?${qs}`, ResDebateList);
 }
 
 export async function fetchHot(limit = 5, cursor?: string) {
   const qs = new URLSearchParams({ sort: 'hot', limit: String(limit) });
   if (cursor) qs.append('cursor', cursor);
 
-  return fetchJson<typeof DebateList>(
-    `${API}/debates?${qs}`,
-    ApiResponse(DebateList),
-    {
-      next: { revalidate: 30, tags: ['debates', 'hot'] },
-    },
-  ).catch(handleError);
+  return fetchJson(`${API}/debates?${qs}`, ResDebateList, {
+    next: { revalidate: 30, tags: ['debates', 'hot'] },
+  });
 }
 
-export const fetchDebate = cache(async (id: string) => {
-  return fetchJson<typeof DebateDetail>(
-    `${API}/debates/${id}`,
-    ApiResponse(DebateDetail),
-    {
-      next: { revalidate: 5, tags: [`debate:${id}`] },
-    },
-  ).catch(handleError);
-});
+export async function fetchDebate(id: string) {
+  return fetchJson(`${API}/debates/${id}`, ResDebateDetail, {
+    next: { revalidate: 5, tags: [`debate:${id}`] },
+  });
+}
 
-export async function createDebate(body: TCreateDebate) {
-  const data = await fetchJson<typeof OkSchema>(
-    `${API}/debates`,
-    ApiResponse(OkSchema),
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      cache: 'no-store',
-    },
-  ).catch(handleError);
+export async function createDebate(body: z.infer<typeof CreateDebateBody>) {
+  const data = await fetchJson(`${API}/debates`, ResCreateDebate, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    cache: 'no-store',
+  });
 
   import('next/cache').then((c) => {
     c.revalidateTag('debates');
     c.revalidateTag('hot');
   });
   return data;
-}
-
-export async function addComment(body: TCommentBody) {
-  const res = await fetchJson(`${API}/debates/comment`, ResAddComment, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    cache: 'no-store',
-  }).catch(handleError);
-
-  import('next/cache').then((c) => c.revalidateTag(`debate:${body.debateId}`));
-  return res;
-}
-
-export async function addVote(body: { debateId: string; side: 'PRO' | 'CON' }) {
-  return fetchJson<typeof OkSchema>(
-    `${API}/debates/vote`,
-    ApiResponse(OkSchema),
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      cache: 'no-store',
-    },
-  ).catch(handleError);
 }

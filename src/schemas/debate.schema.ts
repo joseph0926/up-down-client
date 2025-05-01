@@ -1,12 +1,19 @@
 import { z } from 'zod';
-import { ApiSuccess, CursorList } from './common.schema';
+import { ISO, cursorList, apiResponse } from '@/schemas/common.schema';
 
-export const DebateSidebarItem = z.object({
-  id: z.string(),
+export const Category = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  slug: z.string(),
+  createdAt: ISO,
+});
+
+export const DebateListItem = z.object({
+  id: z.string().cuid(),
   title: z.string(),
-  content: z.string(),
+  content: z.string().nullable(),
   status: z.enum(['upcoming', 'ongoing', 'closed']),
-  deadline: z.string().datetime(),
+  deadline: ISO,
   dDay: z.number().int(),
   proRatio: z.number(),
   conRatio: z.number(),
@@ -16,55 +23,36 @@ export const DebateSidebarItem = z.object({
   thumbUrl: z.string().nullable(),
 });
 
-export const DebateList = z.object({
-  items: z.array(DebateSidebarItem),
-  nextCursor: z.string().nullable(),
-});
+export const DebateList = cursorList(DebateListItem);
+export const ResDebateList = apiResponse(DebateList);
 
-const CategorySchema = z.object({
-  createdAt: z.string().datetime(),
-  id: z.number(),
-  name: z.string(),
-  slug: z.string(),
-});
-
-export const DebateDetail = z.object({
-  id: z.string().cuid(),
-  title: z.string(),
-  content: z.string().nullable(),
-  status: z.enum(['upcoming', 'ongoing', 'closed']),
-  startAt: z.string().datetime().optional(),
-  deadline: z.string().datetime(),
-  dDay: z.number(),
-  proRatio: z.number(),
-  conRatio: z.number(),
+export const DebateDetail = DebateListItem.extend({
+  startAt: ISO.nullable(),
+  createdAt: ISO,
   proCount: z.number(),
   conCount: z.number(),
-  commentCount: z.number(),
-  viewCount: z.number(),
-  hotScore: z.number(),
-  thumbUrl: z.string().nullable(),
-  smallUrl: z.string().nullable().optional(),
-  createdAt: z.string().datetime(),
-  category: CategorySchema,
+  smallUrl: z.string().nullable(),
+  category: Category,
 });
+export const ResDebateDetail = apiResponse(DebateDetail);
+
+export const DebateListQuery = z.object({
+  sort: z.enum(['hot', 'imminent', 'latest']).default('hot'),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  cursor: z.string().optional(),
+});
+
+export const DebateIdParam = z.object({ id: z.string().cuid() });
 
 export const CreateDebateBody = z.object({
-  title: z.string().min(3),
+  title: z.string().min(3).max(100),
   content: z.string().optional(),
-  startAt: z.string().datetime().optional(),
-  deadline: z.string().datetime(),
+  startAt: ISO.optional(),
+  deadline: ISO,
   categoryId: z.number().int().optional(),
 });
+export const ResCreateDebate = apiResponse(DebateDetail);
 
-export const CommentBody = z.object({
-  debateId: z.string(),
-  side: z.enum(['PRO', 'CON']),
-  nickname: z.string().min(1),
-  content: z.string().min(1),
-});
-
-export const ResDebateList = CursorList(DebateSidebarItem);
-export const ResDebateDetail = ApiSuccess(DebateDetail);
-export const ResCreateDebate = ApiSuccess(DebateDetail);
-export const ResAddComment = ApiSuccess(z.object({ ok: z.literal(true) }));
+export type DebateListDto = z.infer<typeof DebateList>;
+export type DebateItemDto = z.infer<typeof DebateListItem>;
+export type DebateDetailDto = z.infer<typeof DebateDetail>;

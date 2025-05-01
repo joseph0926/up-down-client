@@ -1,5 +1,8 @@
 import { fetchDebate } from '@/services/debate.service';
 import { DebateInfo } from './debate-info';
+import { formatDate } from 'date-fns';
+import { Clock, Eye, MessageCircle } from 'lucide-react';
+import { Badge } from '../ui/badge';
 
 type DebateDetailHeaderProps = {
   debateId: string;
@@ -10,27 +13,40 @@ export const DebateDetailHeader = async ({
 }: DebateDetailHeaderProps) => {
   const debateDetail = await fetchDebate(debateId);
 
-  if (!debateDetail) {
-    return (
-      <header className="mb-4 space-y-2">
-        {/* TODO: 데이터 없음을 표시 */}
-      </header>
-    );
-  }
-
-  const { title, createdAt, deadline, viewCount, commentCount, category } =
-    debateDetail;
+  const date = {
+    created: formatDate(debateDetail.createdAt, 'yyyy-MM-dd'),
+    deadline: formatDate(debateDetail.deadline, 'yyyy-MM-dd'),
+  };
+  const statusColor: Record<typeof debateDetail.status, string> = {
+    upcoming: 'bg-yellow-500',
+    ongoing: 'bg-green-600',
+    closed: 'bg-gray-500',
+  };
 
   return (
-    <header className="mb-4 space-y-2">
-      <h1 className="text-xl font-bold">{title}</h1>
-      <DebateInfo
-        createdAt={createdAt}
-        deadline={deadline}
-        category={category.name}
-        views={viewCount}
-        comments={commentCount}
-      />
+    <header className="mb-6 space-y-3">
+      <h1 className="flex items-center gap-2 text-xl leading-tight font-bold">
+        {debateDetail.title}
+        <Badge className={statusColor[debateDetail.status]}>
+          {debateDetail.status}
+        </Badge>
+      </h1>
+      <ul className="flex flex-wrap gap-4 text-xs text-gray-500">
+        <li className="flex items-center gap-1">
+          <Clock size={14} /> 시작 {date.created}
+        </li>
+        <li className="flex items-center gap-1">
+          <Clock size={14} /> 마감 {date.deadline}
+        </li>
+        <li className="flex items-center gap-1">
+          <Eye size={14} /> {debateDetail.viewCount.toLocaleString()}
+        </li>
+        <li className="flex items-center gap-1">
+          <MessageCircle size={14} />{' '}
+          {debateDetail.commentCount.toLocaleString()}
+        </li>
+        <li className="ml-auto text-blue-700">{debateDetail.category.name}</li>
+      </ul>
     </header>
   );
 };
