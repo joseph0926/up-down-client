@@ -9,7 +9,7 @@ export default function MainLayout({ children }: Props) {
   return (
     <SidebarProvider>
       <Sidebar />
-      <main>{children}</main>
+      <main className="w-full">{children}</main>
     </SidebarProvider>
   );
 }

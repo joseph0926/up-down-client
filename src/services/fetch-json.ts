@@ -8,6 +8,8 @@ export async function fetchJson<S extends z.ZodTypeAny>(
 ): Promise<z.infer<S>> {
   const res = await fetch(url, { next: { revalidate: 30 }, ...init });
   const json = await res.json();
+  console.log(json);
+
   const parsed = schema.parse(json);
 
   if (!parsed.success) {

@@ -74,17 +74,27 @@ export const SidebarDebatesClient = () => {
               <SidebarMenu className="gap-4">
                 {grouped[statusKey].map((d) => {
                   const isClosed = d.status === 'closed';
+                  const isOpen = d.status === 'ongoing';
 
                   return (
                     <SidebarMenuItem
                       key={d.id}
                       className={cn(
                         'flex flex-col gap-1',
-                        isClosed && 'cursor-not-allowed opacity-60',
+                        isOpen
+                          ? 'cursor-pointer opacity-100'
+                          : 'cursor-not-allowed opacity-60',
                       )}
                     >
                       <SidebarMenuButton asChild>
-                        <Link href={`/debate/${d.id}`}>
+                        <Link
+                          href={`/debate/${d.id}`}
+                          className={
+                            isOpen
+                              ? 'pointer-events-auto'
+                              : 'pointer-events-none'
+                          }
+                        >
                           <motion.div
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -95,7 +105,6 @@ export const SidebarDebatesClient = () => {
                             }}
                             className={cn(
                               'flex w-full items-center gap-2 px-2',
-                              isClosed && 'pointer-events-none',
                             )}
                           >
                             {d.thumbUrl ? (

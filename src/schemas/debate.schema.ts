@@ -21,17 +21,32 @@ export const DebateList = z.object({
   nextCursor: z.string().nullable(),
 });
 
+const CategorySchema = z.object({
+  createdAt: z.string().datetime(),
+  id: z.number(),
+  name: z.string(),
+  slug: z.string(),
+});
+
 export const DebateDetail = z.object({
-  id: z.string(),
+  id: z.string().cuid(),
   title: z.string(),
   content: z.string().nullable(),
   status: z.enum(['upcoming', 'ongoing', 'closed']),
-  startAt: z.string().datetime().nullable(),
+  startAt: z.string().datetime().optional(),
   deadline: z.string().datetime(),
+  dDay: z.number(),
+  proRatio: z.number(),
+  conRatio: z.number(),
   proCount: z.number(),
   conCount: z.number(),
+  commentCount: z.number(),
   viewCount: z.number(),
   hotScore: z.number(),
+  thumbUrl: z.string().nullable(),
+  smallUrl: z.string().nullable().optional(),
+  createdAt: z.string().datetime(),
+  category: CategorySchema,
 });
 
 export const CreateDebateBody = z.object({
