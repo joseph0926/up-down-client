@@ -36,7 +36,7 @@ export function useDebate(id: string) {
   return useQuery({
     queryKey: QUERY_KEY.DEBATE.DETAIL(id),
     queryFn: () => fetchDebate(id),
-    staleTime: 5_000,
+    staleTime: Infinity,
   });
 }
 
