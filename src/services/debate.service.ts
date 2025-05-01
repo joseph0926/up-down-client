@@ -8,6 +8,7 @@ import {
 import { TCreateDebate, TCommentBody, SortType } from '@/types/debate.type';
 import { fetchJson } from './fetch-json';
 import { API, handleError } from './api';
+import { cache } from 'react';
 
 export async function fetchDebates({
   pageParam,
@@ -40,7 +41,7 @@ export async function fetchHot(limit = 5, cursor?: string) {
   ).catch(handleError);
 }
 
-export async function fetchDebate(id: string) {
+export const fetchDebate = cache(async (id: string) => {
   return fetchJson<typeof DebateDetail>(
     `${API}/debates/${id}`,
     ApiResponse(DebateDetail),
@@ -48,7 +49,7 @@ export async function fetchDebate(id: string) {
       next: { revalidate: 5, tags: [`debate:${id}`] },
     },
   ).catch(handleError);
-}
+});
 
 export async function createDebate(body: TCreateDebate) {
   const data = await fetchJson<typeof OkSchema>(
