@@ -26,8 +26,8 @@ const COLOR = {
 
 export const DebateDetailClient = ({ debateId }: { debateId: string }) => {
   const { data, status } = useDebate(debateId);
-  const proRef = useRef<HTMLInputElement>(null);
-  const conRef = useRef<HTMLInputElement>(null);
+  const proRef = useRef<HTMLDivElement>(null);
+  const conRef = useRef<HTMLDivElement>(null);
 
   if (status === 'error') return <DetailError />;
 
