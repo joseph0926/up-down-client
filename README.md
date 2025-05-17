@@ -77,10 +77,9 @@ up-down-client/
 │  └─ og/           # OG 기본 이미지
 ├─ src/
 │  ├─ app/          # Next 15 앱 라우터
+│  │  └─ globals.css  # Tailwind 설정 및 글로벌 CSS
 │  ├─ components/   # UI 컴포넌트 (shadcn 패턴)
-│  ├─ libs/         # 유틸리티·API 래퍼
-│  └─ styles/       # 글로벌 CSS
-└─ tailwind.config.ts
+│  └─ lib/          # 유틸리티·API 래퍼
 ```
 
 ---
