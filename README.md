@@ -110,5 +110,5 @@ chore(deps): tailwind-merge 3.2.1 → 3.2.2
 
 ## License <a id="license"></a>
 
-Distributed under the **MIT License**.  
+Distributed under the **MIT License**. See the [LICENSE](./LICENSE) file for details.
 © 2025 Up & Down Team
