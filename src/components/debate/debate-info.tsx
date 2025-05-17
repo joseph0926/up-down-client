@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-type DebateInforops = {
+type DebateInfoProps = {
   author?: string | null;
   createdAt: string;
   deadline: string;
@@ -16,7 +16,7 @@ export const DebateInfo = ({
   category,
   views,
   comments,
-}: DebateInforops) => (
+}: DebateInfoProps) => (
   <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-500">
     {author && <span>작성자 · {author}</span>}
     <span>생성 · {dayjs(createdAt).format('YYYY-MM-DD')}</span>
