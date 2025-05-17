@@ -34,7 +34,7 @@ export const CommentList = ({ debateId, side }: Props) => {
   return (
     <div className="space-y-4">
       {comments.map((c) => (
-        <Card key={`${c.id}-${Math.random()}`}>
+        <Card key={c.id}>
           <CardContent className="space-y-1 py-3">
             <div className="flex items-center justify-between text-xs text-gray-500">
               <span>{c.nickname}</span>
