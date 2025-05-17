@@ -3,12 +3,11 @@ import { SortType, TDebateDetail } from '@/types/debate.type';
 import {
   useInfiniteQuery,
   useMutation,
-  QueryClient,
   useSuspenseQuery,
+  useQueryClient,
 } from '@tanstack/react-query';
 import { createDebate, fetchDebate, fetchDebates } from './debate.service';
 
-const queryClient = new QueryClient();
 
 export function useInfiniteDebates(sort: SortType, limit: number = 10) {
   return useInfiniteQuery({
@@ -35,6 +34,7 @@ export function useDebate(id: string) {
 }
 
 export function useCreateDebate() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createDebate,
     onSuccess: () =>

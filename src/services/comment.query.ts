@@ -1,13 +1,12 @@
 import {
   useInfiniteQuery,
   useMutation,
-  QueryClient,
+  useQueryClient,
 } from '@tanstack/react-query';
 import { fetchComments, addComment } from './comment.service';
 import { QUERY_KEY } from '@/lib/query/query-key';
 import { CommentListDto } from '@/schemas/comment.schema';
 
-const qc = new QueryClient();
 
 export function useComments(debateId: string, side: 'PRO' | 'CON', limit = 20) {
   return useInfiniteQuery({
@@ -27,11 +26,15 @@ export function useComments(debateId: string, side: 'PRO' | 'CON', limit = 20) {
 }
 
 export function useAddComment() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addComment,
     onSuccess: (_res, variables) => {
-      qc.invalidateQueries({
-        queryKey: QUERY_KEY.COMMENT.ALL(variables.debateId, variables.side),
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEY.COMMENT.ALL(
+          variables.debateId,
+          variables.side,
+        ),
       });
     },
   });
