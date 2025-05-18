@@ -17,10 +17,16 @@ export async function fetchJson<S extends ZodTypeAny>(
   schema: ReturnType<typeof apiResponse<S>>,
   init: RequestInit & { next?: { revalidate?: number; tags?: string[] } } = {},
 ): Promise<z.infer<S>> {
-  const res = await fetch(url, {
-    ...init,
-    next: { revalidate: 30, ...init.next },
-  });
+  let res: Response;
+
+  try {
+    res = await fetch(url, {
+      ...init,
+      next: { revalidate: 30, ...init.next },
+    });
+  } catch (e) {
+    throw new ApiError('NETWORK', (e as Error).message ?? 'Fetch failed', 503);
+  }
   let json: unknown;
   try {
     json = await res.json();
@@ -28,15 +34,14 @@ export async function fetchJson<S extends ZodTypeAny>(
     throw new ApiError('PARSE', 'Invalid JSON', res.status);
   }
 
-  const parsed = schema.parse(json);
+  const parsed = schema.safeParse(json);
   if (!parsed.success) {
-    const parsedFail = parsed as {
-      code: 'VALIDATION' | 'NOT_FOUND' | 'FORBIDDEN' | 'CONFLICT' | 'INTERNAL';
-      message: string;
-      success: false;
-      data: null;
-    };
-    throw new ApiError(parsedFail.code, parsedFail.message, res.status);
+    const { code, message } = parsed.error.flatten().fieldErrors;
+    throw new ApiError(
+      code?.[0] ?? 'VALIDATION',
+      message?.[0] ?? 'Invalid',
+      res.status,
+    );
   }
   return parsed.data;
 }

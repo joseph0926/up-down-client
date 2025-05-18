@@ -12,7 +12,7 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://updown.kr'),
+  metadataBase: new URL('https://up-down.shop'),
 
   title: {
     default: 'Up & Down - 실시간 찬반 토론 플랫폼',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     '댓글 좋아요',
   ],
 
-  authors: [{ name: 'Up & Down Team', url: 'https://updown.kr' }],
+  authors: [{ name: 'Up & Down Team', url: 'https://up-down.shop' }],
   creator: 'Up & Down Team',
 
   robots: {
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'Up & Down',
-    url: 'https://updown.kr',
+    url: 'https://up-down.shop',
     title: 'Up & Down - 실시간 찬반 토론 플랫폼',
     description:
       '다양한 사회 이슈를 찬반으로 토론하고 명확한 결론을 도출하세요!',
