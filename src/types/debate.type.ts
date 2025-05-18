@@ -1,8 +1,8 @@
+import { CommentBody } from '@/schemas/comment.schema';
 import {
   DebateList,
   DebateDetail,
   CreateDebateBody,
-  CommentBody,
 } from '@/schemas/debate.schema';
 import { z } from 'zod';
 
