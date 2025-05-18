@@ -28,7 +28,7 @@ type Props = {
   debateId: string;
   side: 'PRO' | 'CON';
   placeholder: string;
-  scrollAnchor?: React.RefObject<HTMLDivElement>;
+  scrollAnchor?: React.RefObject<HTMLDivElement | null>;
 };
 
 export function CommentInput({
