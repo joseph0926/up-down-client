@@ -1,5 +1,4 @@
 import { fetchDebate } from '@/services/debate.service';
-import { DebateInfo } from './debate-info';
 import { formatDate } from 'date-fns';
 import { Clock, Eye, MessageCircle } from 'lucide-react';
 import { Badge } from '../ui/badge';

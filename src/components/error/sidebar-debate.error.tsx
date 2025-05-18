@@ -1,7 +1,6 @@
 import { AlertOctagon } from 'lucide-react';
 
 export const SidebarDebateErrorFallback = ({
-  error,
   reset,
 }: {
   error: Error;

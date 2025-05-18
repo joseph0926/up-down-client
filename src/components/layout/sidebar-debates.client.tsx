@@ -73,7 +73,7 @@ export const SidebarDebatesClient = () => {
               </h3>
               <SidebarMenu className="gap-4">
                 {grouped[statusKey].map((d) => {
-                  const isClosed = d.status === 'closed';
+                  // const isClosed = d.status === 'closed';
                   const isOpen = d.status === 'ongoing';
 
                   return (

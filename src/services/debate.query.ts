@@ -1,5 +1,5 @@
 import { QUERY_KEY } from '@/lib/query/query-key';
-import { SortType, TDebateDetail } from '@/types/debate.type';
+import { SortType } from '@/types/debate.type';
 import {
   useInfiniteQuery,
   useMutation,
@@ -7,7 +7,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { createDebate, fetchDebate, fetchDebates } from './debate.service';
-
 
 export function useInfiniteDebates(sort: SortType, limit: number = 10) {
   return useInfiniteQuery({
