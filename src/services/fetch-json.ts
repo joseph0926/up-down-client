@@ -43,5 +43,5 @@ export async function fetchJson<S extends ZodTypeAny>(
       res.status,
     );
   }
-  return parsed.data;
+  return parsed.data.data;
 }
