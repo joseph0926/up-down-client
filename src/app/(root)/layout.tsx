@@ -9,7 +9,7 @@ export default function MainLayout({ children }: Props) {
   return (
     <SidebarProvider>
       <Sidebar />
-      <main className="w-full">
+      <main className="w-full overflow-x-hidden">
         <SidebarTrigger className="fixed" />
         {children}
       </main>

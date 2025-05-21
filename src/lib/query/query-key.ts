@@ -3,6 +3,7 @@ import { SortType } from '@/types/debate.type';
 const DOMAIN = {
   DEBATE: 'debate',
   COMMENT: 'comment',
+  KEYWORD: 'keyword',
 };
 
 export const QUERY_KEY = {
@@ -14,5 +15,8 @@ export const QUERY_KEY = {
   COMMENT: {
     ALL: (id: string, side: 'PRO' | 'CON') =>
       [DOMAIN.COMMENT, id, side] as const,
+  },
+  KEYWORD: {
+    LIVE: [DOMAIN.KEYWORD, 'live'],
   },
 };
