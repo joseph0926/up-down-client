@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
+import Image from 'next/image';
 
 const FEATURED_DEBATE = {
   id: '1',
@@ -19,9 +20,10 @@ export const FeatureDebateCard = () => {
         whileHover={{ scale: 1.02 }}
         className="relative h-56 w-full overflow-hidden rounded-2xl"
       >
-        <img
+        <Image
           src={FEATURED_DEBATE.thumb}
           alt={FEATURED_DEBATE.title}
+          fill
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />

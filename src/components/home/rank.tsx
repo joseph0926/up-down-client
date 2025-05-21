@@ -19,7 +19,7 @@ export const Rank = () => {
 
   return (
     <section className="border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
-      <Tabs value={tab} onValueChange={(value) => setTab(value as any)}>
+      <Tabs value={tab} onValueChange={(value) => setTab(value)}>
         <TabsList className="mx-auto mb-4 grid w-full max-w-xs grid-cols-3">
           <TabsTrigger value="hot">🥵 실시간</TabsTrigger>
           <TabsTrigger value="new">🆕 신규</TabsTrigger>
