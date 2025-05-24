@@ -1,12 +1,15 @@
 import { Bell, Search } from 'lucide-react';
+import { Link } from 'react-router';
 
 export function Header() {
   return (
     <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-zinc-800 dark:bg-zinc-900 dark:supports-[backdrop-filter]:bg-zinc-900/60">
       <div className="container mx-auto flex h-14 items-center justify-between px-4 lg:px-8">
-        <h1 className="font-extrabold tracking-tight text-blue-600 dark:text-blue-400">
-          Up&nbsp;&amp;&nbsp;Down
-        </h1>
+        <Link to="/">
+          <h1 className="font-extrabold tracking-tight text-blue-600 dark:text-blue-400">
+            Up&nbsp;&amp;&nbsp;Down
+          </h1>
+        </Link>
         <div className="flex items-center gap-4">
           <div className="relative hidden sm:block">
             <Search className="absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2 text-zinc-500" />

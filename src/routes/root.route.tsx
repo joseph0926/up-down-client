@@ -11,6 +11,17 @@ export const rootRoutes: RouteObject[] = [
         index: true,
         element: <HomePage />,
       },
+      {
+        path: 'debate/:debateId',
+        lazy: async () => {
+          const { DebatePage: Component } = await import(
+            '@/pages/root/debate.page'
+          );
+          return {
+            Component,
+          };
+        },
+      },
     ],
   },
 ];

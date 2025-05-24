@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { type ComponentProps, useRef } from 'react';
+import { Link } from 'react-router';
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll';
 import { QUERY_KEY } from '@/lib/query-key';
 import { cn } from '@/lib/utils';
@@ -76,7 +77,8 @@ export function Feed({
               const debate = items[virtualRow.index];
 
               return (
-                <div
+                <Link
+                  to={`/debate/${debate.id}`}
                   key={debate.id}
                   data-index={virtualRow.index}
                   ref={rowVirtualizer.measureElement}
@@ -90,7 +92,7 @@ export function Feed({
                   }}
                 >
                   <DebateCard debate={debate} />
-                </div>
+                </Link>
               );
             })}
           </div>
