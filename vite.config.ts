@@ -5,7 +5,7 @@ import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const { NEXT_PUBLIC_SERVER_URL } = env;
+  const { VITE_SERVER_URL } = env;
 
   return {
     plugins: [react(), tailwindcss()],
@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       proxy: {
         '^/api/.*': {
-          target: NEXT_PUBLIC_SERVER_URL,
+          target: VITE_SERVER_URL,
           changeOrigin: true,
           secure: false,
           rewrite: (p) => p.replace(/^\/api/, ''),

@@ -1,5 +1,9 @@
 import { parseApiResponse } from '@/schemas/common.schema';
-import { DebateListSchema } from '@/schemas/debate.schema';
+import {
+  type DebateDetailRes,
+  DebateDetailSchema,
+  DebateListSchema,
+} from '@/schemas/debate.schema';
 import type { DebateListRes } from '@/types/debate.type';
 import { axiosInstance } from './api';
 
@@ -23,5 +27,14 @@ export async function getDebates({
   const parsed = parseApiResponse(data, DebateListSchema);
 
   if (!parsed.success) throw new Error(parsed.message);
+  return parsed.data;
+}
+
+export async function getDebateDetail(id: string): Promise<DebateDetailRes> {
+  const { data } = await axiosInstance.get(`/debates/${id}`);
+
+  const parsed = parseApiResponse(data, DebateDetailSchema);
+  if (!parsed.success) throw new Error('API schema mismatch');
+
   return parsed.data;
 }
