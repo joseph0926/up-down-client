@@ -3,7 +3,7 @@ import { Header } from '@/components/layout/header';
 
 export function RootLayout() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-screen flex-col overflow-hidden">
       <Header />
       <Outlet />
     </div>

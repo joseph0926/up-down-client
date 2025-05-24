@@ -1,12 +1,21 @@
-export type DebateStatus = 'ongoing' | 'closed';
+export type DebateStatus = 'upcoming' | 'ongoing' | 'closed';
 
-export type Debate = {
+export interface Debate {
   id: string;
   title: string;
+  content: string | null;
+  status: DebateStatus;
   deadline: string;
+  dDay: number;
   proRatio: number;
   conRatio: number;
+  commentCount: number;
+  viewCount: number;
+  hotScore: number;
   thumbUrl: string | null;
-  smallUrl: string | null;
-  status: DebateStatus;
-};
+}
+
+export interface DebateListRes {
+  items: Debate[];
+  nextCursor: string | null;
+}

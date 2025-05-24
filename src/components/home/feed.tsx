@@ -1,59 +1,103 @@
-import dayjs from 'dayjs';
-import { AnimatePresence } from 'motion/react';
-import { type ComponentProps, useState } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { type ComponentProps, useRef } from 'react';
+import { useInfiniteScroll } from '@/hooks/use-infinite-scroll';
+import { QUERY_KEY } from '@/lib/query-key';
 import { cn } from '@/lib/utils';
-import type { Debate } from '@/types/debate.type';
+import { getDebates } from '@/services/debate.service';
+import { ErrorView, SkeletonList } from '../state/home/feed.state';
 import { CreateDebateCard } from './create-debate-card';
 import { DebateCard } from './debate-card';
 
-function generateDummyDebates(): Debate[] {
-  return [
-    {
-      id: 'd-1',
-      title: '주4일제, 지금 도입해야 할까?',
-      deadline: dayjs().add(2, 'day').toISOString(),
-      proRatio: 66,
-      conRatio: 34,
-      thumbUrl: 'https://source.unsplash.com/600x300?office',
-      smallUrl: null,
-      status: 'ongoing',
-    },
-    {
-      id: 'd-2',
-      title: '부동산 가격 안정화를 위한 공매도 연장',
-      deadline: dayjs().add(1, 'day').toISOString(),
-      proRatio: 42,
-      conRatio: 58,
-      thumbUrl: 'https://source.unsplash.com/600x300?real-estate',
-      smallUrl: null,
-      status: 'ongoing',
-    },
-    {
-      id: 'd-3',
-      title: 'AI 기업에 대한 강력한 규제가 필요하다',
-      deadline: dayjs().subtract(1, 'hour').toISOString(),
-      proRatio: 49,
-      conRatio: 51,
-      thumbUrl: 'https://source.unsplash.com/600x300?ai,robot',
-      smallUrl: null,
-      status: 'closed',
-    },
-  ];
-}
+export type FeedProps = ComponentProps<'section'> & {
+  sort?: 'hot' | 'imminent' | 'latest';
+  limit?: number;
+};
 
-type FeedProps = ComponentProps<'section'>;
+export function Feed({
+  className,
+  sort = 'latest',
+  limit = 10,
+  ...rest
+}: FeedProps) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isError,
+    isFetching,
+    isPending,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: QUERY_KEY.DEBATES.ALL(sort),
+    queryFn: ({ pageParam }) =>
+      getDebates({ sort, limit, cursor: pageParam as string | undefined }),
+    initialPageParam: '',
+    getNextPageParam: (last) => last.nextCursor ?? undefined,
+    placeholderData: (d) => d,
+  });
 
-export function Feed({ className, ...rest }: FeedProps) {
-  const [debates] = useState(() => generateDummyDebates());
+  const parentRef = useRef<HTMLDivElement | null>(null);
+  const items = data?.pages.flatMap((p) => p.items) ?? [];
+
+  const sentinelRef = useInfiniteScroll({
+    hasNextPage,
+    isFetching: isFetchingNextPage,
+    onLoadMore: () => fetchNextPage(),
+    root: parentRef.current,
+    margin: '0px 0px 300px 0px',
+  });
+
+  const rowVirtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 260,
+    overscan: 5,
+  });
 
   return (
     <section className={cn('space-y-6', className)} {...rest}>
       <CreateDebateCard />
-      <AnimatePresence>
-        {debates.map((p) => (
-          <DebateCard key={p.id} debate={p} />
-        ))}
-      </AnimatePresence>
+      {isPending ? (
+        <SkeletonList count={3} />
+      ) : isError ? (
+        <ErrorView onRetry={() => refetch()} />
+      ) : (
+        <div ref={parentRef} className="relative max-h-[80vh] overflow-y-auto">
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              position: 'relative',
+              width: '100%',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const debate = items[virtualRow.index];
+
+              return (
+                <div
+                  key={debate.id}
+                  data-index={virtualRow.index}
+                  ref={rowVirtualizer.measureElement}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualRow.start}px)`,
+                    paddingBottom: 16,
+                  }}
+                >
+                  <DebateCard debate={debate} />
+                </div>
+              );
+            })}
+          </div>
+          <div ref={sentinelRef} className="h-1" />
+        </div>
+      )}
+      {isFetching && !isFetchingNextPage ? <SkeletonList count={1} /> : null}
     </section>
   );
 }
