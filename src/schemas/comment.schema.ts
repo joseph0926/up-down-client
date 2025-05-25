@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import type { ApiResult, ApiSuccessRes } from '@/schemas/common.schema';
+import {
+  type ApiResult,
+  type ApiSuccessRes,
+  parseApiResponse,
+} from '@/schemas/common.schema';
 
 export const CommentSchema = z.object({
   id: z.string().regex(/^[cC][^\s-]{8,}$/),
@@ -19,3 +23,18 @@ export const CommentListSchema = z.object({
 export type CommentList = z.infer<typeof CommentListSchema>;
 export type CommentListSuccess = ApiSuccessRes<CommentList>;
 export type CommentListResult = ApiResult<CommentList>;
+
+export const CreateCommentBodySchema = z.object({
+  debateId: z.string().regex(/^[cC][^\s-]{8,}$/),
+  side: z.enum(['PRO', 'CON']),
+  nickname: z.string().min(1).max(20),
+  content: z.string().min(1).max(300),
+});
+export type CreateCommentPayload = z.infer<typeof CreateCommentBodySchema>;
+export type CreateCommentRes = ApiSuccessRes<{ ok: true }>;
+export type CreateCommentResult = ApiResult<{ ok: true }>;
+
+export const parseCreateCommentResponse = (
+  data: unknown,
+): CreateCommentResult =>
+  parseApiResponse(data, z.object({ ok: z.literal(true) }));

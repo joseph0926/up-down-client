@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
+import { CommentForm } from '@/components/debate/comment-form';
 import { Comments } from '@/components/debate/comments';
 import { OptionCard } from '@/components/debate/option-card';
 import { DebateDetailError } from '@/components/state/debate/debate.error';
@@ -35,7 +36,7 @@ export function DebateDetailPage() {
   const totalVotes = debate.proCount + debate.conCount;
 
   return (
-    <div className="mx-auto max-h-screen max-w-3xl space-y-8 overflow-y-auto pt-6 pr-8 pb-24 pl-4">
+    <div className="max-h-screen space-y-8 overflow-y-auto pt-6 pr-4 pb-24 pl-2 md:pr-8 md:pl-4">
       <button
         onClick={() => nav(-1)}
         className="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -85,6 +86,7 @@ export function DebateDetailPage() {
           {(debate.conRatio * 100).toFixed(0)}% · {debate.conCount}표
         </span>
       </div>
+      <CommentForm />
       <Comments />
     </div>
   );
