@@ -1,113 +1,122 @@
 # Up & Down Client
 
 <p align="center">
-  <img src="public/images/logo.webp" alt="Up & Down logo" width="180" />
+  <img src="public/logo.webp" alt="Up & Down logo" width="180" />
 </p>
 
-실시간 찬반 토론 플랫폼 **“Up & Down”** 의 프론트엔드 코드 베이스입니다.
+실시간 찬반 토론 플랫폼 **“Up & Down”** 의 프론트엔드 코드베이스입니다.
+React + Vite로 빌드되며, UI는 Tailwind CSS와 Shadcn 컴포넌트로 구현되었습니다.
 
 ---
 
-## Table of Contents
+## 목차
 
-1. [Features](#features)
-2. [Tech Stack](#tech-stack)
-3. [Getting Started](#getting-started)
-4. [Available Scripts](#available-scripts)
-5. [Project Structure](#project-structure)
-6. [Environment Variables](#environment-variables)
-7. [Commit Convention](#commit-convention)
-8. [License](#license)
-
----
-
-## Features <a id="features"></a>
-
-| 구분                     | 설명                                             |
-| ------------------------ | ------------------------------------------------ |
-| 🔵 **찬성 / 🔴 반대** UI | 네온 글로우 로고 & 색상 테마, 실시간 퍼센티지 바 |
-| 💬 익명 댓글             | IP 단위 Rate-Limit, 좋아요 1회 제한              |
-| 🕒 마감 타이머           | 논쟁 종료 시 UI 잠금 & 결과 고정                 |
+1. [주요 기능](#주요-기능)
+2. [기술 스택](#기술-스택)
+3. [시작하기](#시작하기)
+4. [스크립트](#스크립트)
+5. [폴더 구조](#폴더-구조)
+6. [환경 변수](#환경-변수)
+7. [커밋 컨벤션](#커밋-컨벤션)
+8. [라이선스](#라이선스)
 
 ---
 
-## Tech Stack <a id="tech-stack"></a>
+## 주요 기능
 
-| 범주           | 라이브러리                                   |
-| -------------- | -------------------------------------------- |
-| **Framework**  | React 19, Next 15 (App Router, Metadata API) |
-| **UI / Style** | Tailwind CSS 4, Shadcn                       |
-
----
-
-## Getting Started <a id="getting-started"></a>
-
-```bash
-# 1. 의존성 설치
-pnpm i
-
-# 2. 개발 서버 (http://localhost:3000)
-pnpm dev
-
-# 3. 프로덕션 빌드
-pnpm build && pnpm start
-```
-
-> **Node ≥ 20**, **pnpm ≥ 8** 이상 권장
+| 구분                     | 설명                                        |
+| ------------------------ | ------------------------------------------- |
+| 🔵 **찬성 / 🔴 반대** UI | 네온 글로우 색상 테마, 실시간 퍼센티지 바   |
+| 💬 익명 댓글             | IP 단위 Rate-Limit, 좋아요 1회 제한         |
+| 🕒 마감 타이머           | 논쟁 종료 시 UI 잠금 & 결과 고정            |
+| ♾️ 인피니트 스크롤       | TanStack React Query + IntersectionObserver |
+| ⚡ Skeleton 로딩         | 초기 데이터 페칭 시 Skeleton 컴포넌트 표시  |
 
 ---
 
-## Available Scripts <a id="available-scripts"></a>
+## 기술 스택
 
-| 명령어       | 설명                             |
-| ------------ | -------------------------------- |
-| `pnpm dev`   | Turbopack 기반 개발 서버 (HMR)   |
-| `pnpm build` | 프로덕션 빌드 (`.next/`)         |
-| `pnpm start` | 로컬 프로덕션 실행               |
-| `pnpm lint`  | ESLint + TypeScript strict check |
+| 범주                 | 라이브러리 / 버전      |
+| -------------------- | ---------------------- |
+| **Language**         | TypeScript 5.8         |
+| **Build Tool**       | Vite 6                 |
+| **Framework**        | React 19               |
+| **Router**           | React Router 7         |
+| **Data Fetching**    | TanStack React Query 5 |
+| **Styling**          | Tailwind CSS 4         |
+| **UI Kit**           | shadcn/ui              |
+| **Animation**        | motion/react           |
+| **State Management** | Zustand 5              |
 
 ---
 
-## Project Structure <a id="project-structure"></a>
+> **Node 22** 및 **pnpm 10** 이상을 권장합니다.
+
+---
+
+## 스크립트
+
+| 명령어         | 설명                                     |
+| -------------- | ---------------------------------------- |
+| `pnpm dev`     | Vite 개발 서버 (`http://localhost:3000`) |
+| `pnpm build`   | 프로덕션 빌드(`dist/`)                   |
+| `pnpm preview` | 빌드 결과 로컬 미리보기                  |
+| `pnpm lint`    | ESLint + TypeScript strict check         |
+
+---
+
+## 폴더 구조
 
 ```
-up-down-client/
-├─ public/
-│  ├─ icons/        # 파비콘·애플 터치 아이콘
-│  └─ og/           # OG 기본 이미지
-├─ src/
-│  ├─ app/          # Next 15 앱 라우터
-│  │  └─ globals.css  # Tailwind 설정 및 글로벌 CSS
-│  ├─ components/   # UI 컴포넌트 (shadcn 패턴)
-│  └─ lib/          # 유틸리티·API 래퍼
+.
+├── src/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── index.css
+│   ├── routes/
+│   ├── pages/
+│   ├── components/
+│   │   ├── home/
+│   │   ├── debate/
+│   │   ├── layout/
+│   │   └── ui/
+│   ├── hooks/
+│   ├── lib/
+│   ├── schemas/
+│   ├── services/
+│   └── types/
+└── vite.config.ts
 ```
 
 ---
 
-## Environment Variables <a id="environment-variables"></a>
+## 환경 변수
 
-`.env.local`
+루트에 `.env.development` 파일을 생성하여 값을 설정합니다.
 
 ```env
-NEXT_PUBLIC_API_BASE=
-NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=
+# 개발 기준
+NODE_ENV=development
+
+VITE_CLIENT_URL=http://localhost:3000
+VITE_SERVER_URL=http://localhost:4000
 ```
 
 ---
 
-## Commit Convention <a id="commit-convention"></a>
+## 커밋 컨벤션
 
-커밋 메시지는 **Conventional Commits** 형식을 따릅니다.
+[Conventional Commits](https://www.conventionalcommits.org/) 규칙을 따릅니다.
 
 ```
-feat: 새 토론 카드 컴포넌트 추가
-fix(ui): 모바일 뷰에서 버튼 크기 오류 수정
-chore(deps): tailwind-merge 3.2.1 → 3.2.2
+feat(debate): 토론 카드 컴포넌트 추가
+fix(ui): 모바일에서 버튼 높이 오류 수정
+chore(deps): react-query 5.75.0 → 5.76.2
 ```
 
 ---
 
-## License <a id="license"></a>
+## 라이선스
 
-Distributed under the **MIT License**. See the [LICENSE](./LICENSE) file for details.
+이 프로젝트는 [MIT 라이선스](./LICENCE)를 따릅니다.
 © 2025 Up & Down Team
