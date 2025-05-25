@@ -37,6 +37,7 @@ export function Feed({
     initialPageParam: '',
     getNextPageParam: (last) => last.nextCursor ?? undefined,
     placeholderData: (d) => d,
+    staleTime: Infinity,
   });
 
   const parentRef = useRef<HTMLDivElement | null>(null);

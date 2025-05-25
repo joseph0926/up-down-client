@@ -30,7 +30,8 @@ export async function getDebates({
   return parsed.data;
 }
 
-export async function getDebateDetail(id: string): Promise<DebateDetailRes> {
+export async function getDebateDetail(id?: string): Promise<DebateDetailRes> {
+  if (!id) throw new Error('debateId가 존재하지 않습니다.');
   const { data } = await axiosInstance.get(`/debates/${id}`);
 
   const parsed = parseApiResponse(data, DebateDetailSchema);
