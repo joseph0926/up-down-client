@@ -1,5 +1,6 @@
 import { Bell, Search } from 'lucide-react';
 import { Link } from 'react-router';
+import { MobileSidebar } from './mobile-sidebar';
 
 export function Header() {
   return (
@@ -23,11 +24,7 @@ export function Header() {
             <Bell className="h-5 w-5" />
             <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-rose-500" />
           </button>
-          <img
-            src="https://source.unsplash.com/40x40?face"
-            alt="avatar"
-            className="h-8 w-8 rounded-full object-cover"
-          />
+          <MobileSidebar />
         </div>
       </div>
     </header>

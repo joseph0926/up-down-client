@@ -7,7 +7,6 @@ import { QUERY_KEY } from '@/lib/query-key';
 import { cn } from '@/lib/utils';
 import { getDebates } from '@/services/debate.service';
 import { ErrorView, SkeletonList } from '../state/home/feed.state';
-import { CreateDebateCard } from './create-debate-card';
 import { DebateCard } from './debate-card';
 
 export type FeedProps = ComponentProps<'section'> & {
@@ -60,13 +59,12 @@ export function Feed({
 
   return (
     <section className={cn('space-y-6', className)} {...rest}>
-      <CreateDebateCard />
       {isPending ? (
         <SkeletonList count={3} />
       ) : isError ? (
         <ErrorView onRetry={() => refetch()} />
       ) : (
-        <div ref={parentRef} className="relative max-h-[80vh] overflow-y-auto">
+        <div ref={parentRef} className="relative max-h-screen overflow-y-auto">
           <div
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
