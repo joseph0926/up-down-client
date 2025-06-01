@@ -10,6 +10,8 @@ export const DebateSchema = z.object({
   dDay: z.number(),
   proRatio: z.number(),
   conRatio: z.number(),
+  proCount: z.number(),
+  conCount: z.number(),
   commentCount: z.number(),
   viewCount: z.number(),
   hotScore: z.number(),

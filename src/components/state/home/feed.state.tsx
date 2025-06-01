@@ -4,12 +4,26 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export function SkeletonCard() {
   return (
-    <article className="rounded-2xl border p-4 shadow-sm dark:border-zinc-700">
-      <Skeleton className="mb-4 h-4 w-1/3" />
-      <Skeleton className="mb-3 aspect-video w-full rounded-lg" />
-      <Skeleton className="h-3 w-full" />
-      <Skeleton className="mt-2 h-3 w-2/3" />
-    </article>
+    <li className="list-none overflow-hidden rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-4 w-4 rounded-full" />
+        <Skeleton className="h-4 w-2/3 rounded" />
+        <Skeleton className="ml-auto h-3 w-10 rounded" />
+      </div>
+      <Skeleton className="mt-3 h-3 w-full rounded-full" />
+      <div className="mt-3 grid grid-cols-[1fr_auto] gap-3">
+        <div className="space-y-2">
+          <Skeleton className="h-3 w-full rounded" />
+          <Skeleton className="h-3 w-5/6 rounded" />
+        </div>
+        <Skeleton className="h-24 w-24 rounded-lg" />
+      </div>
+      <div className="mt-2 flex justify-around">
+        {Array.from({ length: 4 }).map((_, j) => (
+          <Skeleton key={j} className="h-4 w-10 rounded" />
+        ))}
+      </div>
+    </li>
   );
 }
 

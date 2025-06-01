@@ -9,6 +9,8 @@ export interface Debate {
   dDay: number;
   proRatio: number;
   conRatio: number;
+  proCount: number;
+  conCount: number;
   commentCount: number;
   viewCount: number;
   hotScore: number;
