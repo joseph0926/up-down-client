@@ -1,9 +1,11 @@
 import {
   type CommentList,
   CommentListSchema,
+  CommentSchema,
   type CreateCommentPayload,
   type CreateCommentRes,
   parseCreateCommentResponse,
+  parseLikeCommentResponse,
 } from '@/schemas/comment.schema';
 import { parseApiResponse } from '@/schemas/common.schema';
 import { axiosInstance } from './api';
@@ -36,4 +38,17 @@ export async function createComment(
   const parsed = parseCreateCommentResponse(data);
   if (!parsed.success) throw new Error(parsed.message);
   return parsed;
+}
+
+export async function toggleCommentLike(
+  id: string,
+): Promise<{ liked: boolean }> {
+  CommentSchema.shape.id.parse(id);
+
+  const { data } = await axiosInstance.post(`/comments/${id}/like`);
+
+  const parsed = parseLikeCommentResponse(data);
+  if (!parsed.success) throw new Error(parsed.message);
+
+  return parsed.data;
 }

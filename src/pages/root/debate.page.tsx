@@ -10,6 +10,7 @@ import { OptionCard } from '@/components/debate/option-card';
 import { DebateDetailError } from '@/components/state/debate/debate.error';
 import { DebateDetailLoading } from '@/components/state/debate/debate.loading';
 import { QUERY_KEY } from '@/lib/query-key';
+import { cn } from '@/lib/utils';
 import { getDebateDetail } from '@/services/debate.service';
 
 dayjs.extend(relativeTime);
@@ -32,6 +33,13 @@ export function DebateDetailPage() {
 
   if (isLoading) return <DebateDetailLoading />;
   if (isError || !debate) return <DebateDetailError onRetry={refetch} />;
+
+  const isTie = debate.proRatio === debate.conRatio;
+  const leading = isTie
+    ? null
+    : debate.proRatio > debate.conRatio
+      ? { side: 'pro', label: '찬성 우세', color: 'blue' }
+      : { side: 'con', label: '반대 우세', color: 'red' };
 
   const totalVotes = debate.proCount + debate.conCount;
 
@@ -65,16 +73,36 @@ export function DebateDetailPage() {
           summary={debate.content ?? ''}
         />
       </div>
-      <div className="relative flex items-center gap-4">
-        <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
+      <div className="relative flex items-center">
+        <div
+          className="h-2 flex-1 overflow-hidden rounded-full"
+          style={{
+            background: `linear-gradient(
+        to right,
+        #3b82f6 0%,                      
+        #3b82f6 ${debate.proRatio * 100}%, 
+        #ef4444 ${debate.proRatio * 100}%, 
+        #ef4444 100%                       
+      )`,
+          }}
+        />
+        <div className="absolute top-1/2 left-1/2 my-2 -translate-x-1/2 -translate-y-1/2">
           <div
-            className="h-full bg-blue-500"
-            style={{ width: `${debate.proRatio * 100}%` }}
-          />
-        </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-zinc-100 bg-green-600 text-white shadow-md dark:border-zinc-800 dark:bg-green-700">
-            <span className="text-sm font-bold">{totalVotes}</span>
+            className={cn(
+              'flex h-20 w-20 flex-col items-center justify-center rounded-full border-4 bg-white shadow-md dark:border-zinc-700',
+              leading
+                ? leading.color === 'blue'
+                  ? 'border-blue-500 text-blue-700'
+                  : 'border-red-500 text-red-700'
+                : 'border-zinc-300 text-zinc-700',
+            )}
+          >
+            <span className="text-[10px] leading-none font-semibold">
+              {isTie ? '동률' : leading!.label}
+            </span>
+            <span className="text-xl font-extrabold">
+              {totalVotes.toLocaleString()}
+            </span>
           </div>
         </div>
       </div>

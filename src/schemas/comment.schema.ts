@@ -12,6 +12,7 @@ export const CommentSchema = z.object({
   content: z.string(),
   side: z.enum(['PRO', 'CON']),
   likes: z.number(),
+  liked: z.boolean().default(false),
   createdAt: z.string().datetime(),
 });
 export type Comment = z.infer<typeof CommentSchema>;
@@ -38,3 +39,12 @@ export const parseCreateCommentResponse = (
   data: unknown,
 ): CreateCommentResult =>
   parseApiResponse(data, z.object({ ok: z.literal(true) }));
+
+export const LikeCommentSuccessSchema = z.object({
+  liked: z.boolean(),
+});
+export type LikeCommentRes = ApiSuccessRes<{ liked: boolean }>;
+export type LikeCommentResult = ApiResult<{ liked: boolean }>;
+
+export const parseLikeCommentResponse = (data: unknown): LikeCommentResult =>
+  parseApiResponse(data, LikeCommentSuccessSchema);

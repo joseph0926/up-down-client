@@ -1,10 +1,25 @@
 import 'dayjs/locale/ko';
+import {
+  type InfiniteData,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { ThumbsUp, User } from 'lucide-react';
 import { motion } from 'motion/react';
-import { memo, useLayoutEffect, useRef, useState } from 'react';
+import {
+  memo,
+  startTransition,
+  useLayoutEffect,
+  useOptimistic,
+  useRef,
+  useState,
+} from 'react';
+import { QUERY_KEY } from '@/lib/query-key';
 import { cn } from '@/lib/utils';
+import type { CommentList } from '@/schemas/comment.schema';
+import { toggleCommentLike } from '@/services/comment.service';
 
 dayjs.extend(relativeTime);
 
@@ -17,16 +32,80 @@ export interface CommentItemProps {
   content: string;
   likes: number;
   createdAt: string;
+  debateId: string;
+  liked: boolean;
 }
 
 export const CommentItem = memo(
-  ({ nickname, side, content, likes, createdAt }: CommentItemProps) => {
+  ({
+    nickname,
+    side,
+    content,
+    likes,
+    createdAt,
+    debateId,
+    id,
+    liked,
+  }: CommentItemProps) => {
     const isPro = side === 'PRO';
-    const color = isPro ? 'blue' : 'red';
 
     const paragraphRef = useRef<HTMLParagraphElement | null>(null);
     const [overflowing, setOverflowing] = useState(false);
     const [expanded, setExpanded] = useState(false);
+
+    const [optState, addOptimistic] = useOptimistic(
+      { likes, liked },
+      (prev, action: 'toggle') =>
+        action === 'toggle'
+          ? prev.liked
+            ? { liked: false, likes: prev.likes - 1 }
+            : { liked: true, likes: prev.likes + 1 }
+          : prev,
+    );
+
+    const qc = useQueryClient();
+    const { mutate: toggleLike, isPending } = useMutation({
+      mutationFn: toggleCommentLike,
+      onMutate: async (commentId: string) => {
+        startTransition(() => addOptimistic('toggle'));
+
+        await qc.cancelQueries({ queryKey: QUERY_KEY.COMMENTS.ALL(debateId) });
+        const prev = qc.getQueryData<InfiniteData<CommentList>>(
+          QUERY_KEY.COMMENTS.ALL(debateId),
+        );
+
+        qc.setQueryData<InfiniteData<CommentList>>(
+          QUERY_KEY.COMMENTS.ALL(debateId),
+          (old) =>
+            old && {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                items: page.items.map((c) =>
+                  c.id === commentId
+                    ? {
+                        ...c,
+                        likes: c.liked ? c.likes - 1 : c.likes + 1,
+                        liked: !c.liked,
+                      }
+                    : c,
+                ),
+              })),
+            },
+        );
+        return { prev };
+      },
+
+      onError: (_e, _id, ctx) => {
+        startTransition(() => addOptimistic('toggle'));
+        if (ctx?.prev)
+          qc.setQueryData(QUERY_KEY.COMMENTS.ALL(debateId), ctx.prev);
+      },
+
+      onSettled: () => {
+        qc.invalidateQueries({ queryKey: QUERY_KEY.COMMENTS.ALL(debateId) });
+      },
+    });
 
     useLayoutEffect(() => {
       const el = paragraphRef.current;
@@ -95,13 +174,25 @@ export const CommentItem = memo(
               </button>
             )}
             <button
-              className={cn(
-                'hover:text- mt-1 inline-flex items-center gap-1 text-xs text-zinc-500',
-                `${color}-600`,
-              )}
+              onClick={() => toggleLike(id)}
+              disabled={isPending}
               aria-label="좋아요"
+              className={cn(
+                'mt-1 inline-flex cursor-pointer items-center gap-1 text-xs transition-colors',
+                optState.liked
+                  ? isPro
+                    ? 'text-blue-600'
+                    : 'text-red-600'
+                  : 'text-zinc-500',
+              )}
             >
-              <ThumbsUp className="h-3.5 w-3.5" /> {likes}
+              <ThumbsUp
+                className={cn(
+                  'h-3.5 w-3.5',
+                  optState.liked && (isPro ? 'fill-blue-600' : 'fill-red-600'),
+                )}
+              />
+              {optState.likes}
             </button>
           </div>
         </div>
