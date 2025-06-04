@@ -5,5 +5,6 @@ export const QUERY_KEY = {
   },
   COMMENTS: {
     ALL: (id?: string) => ['comments', id],
+    BEST: (id?: string) => ['bestComment', id],
   },
 };

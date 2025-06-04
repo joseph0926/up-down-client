@@ -48,3 +48,14 @@ export type LikeCommentResult = ApiResult<{ liked: boolean }>;
 
 export const parseLikeCommentResponse = (data: unknown): LikeCommentResult =>
   parseApiResponse(data, LikeCommentSuccessSchema);
+
+export const BestCommentsSchema = z.object({
+  pro: z.array(CommentSchema),
+  con: z.array(CommentSchema),
+});
+export type BestComments = z.infer<typeof BestCommentsSchema>;
+export type BestCommentsSuccess = ApiSuccessRes<BestComments>;
+export type BestCommentsResult = ApiResult<BestComments>;
+
+export const parseBestCommentsResponse = (data: unknown): BestCommentsResult =>
+  parseApiResponse(data, BestCommentsSchema);

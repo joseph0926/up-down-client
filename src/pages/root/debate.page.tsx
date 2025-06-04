@@ -11,6 +11,7 @@ import { DebateDetailError } from '@/components/state/debate/debate.error';
 import { DebateDetailLoading } from '@/components/state/debate/debate.loading';
 import { QUERY_KEY } from '@/lib/query-key';
 import { cn } from '@/lib/utils';
+import { getBestComments } from '@/services/comment.service';
 import { getDebateDetail } from '@/services/debate.service';
 
 dayjs.extend(relativeTime);
@@ -19,27 +20,35 @@ export function DebateDetailPage() {
   const { debateId } = useParams<{ debateId: string }>();
   const nav = useNavigate();
 
-  const {
-    data: debate,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
+  const debateQuery = useQuery({
     queryKey: QUERY_KEY.DEBATES.DETAIL(debateId),
     queryFn: () => getDebateDetail(debateId!),
     enabled: !!debateId,
     staleTime: Infinity,
   });
 
-  if (isLoading) return <DebateDetailLoading />;
-  if (isError || !debate) return <DebateDetailError onRetry={refetch} />;
+  const bestQuery = useQuery({
+    queryKey: QUERY_KEY.COMMENTS.BEST(debateId),
+    queryFn: () => getBestComments(debateId!),
+    enabled: !!debateId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  if (debateQuery.isLoading || bestQuery.isLoading)
+    return <DebateDetailLoading />;
+
+  if (debateQuery.isError || !debateQuery.data)
+    return <DebateDetailError onRetry={debateQuery.refetch} />;
+
+  const debate = debateQuery.data;
+  const best = bestQuery.data;
 
   const isTie = debate.proRatio === debate.conRatio;
   const leading = isTie
     ? null
     : debate.proRatio > debate.conRatio
-      ? { side: 'pro', label: '찬성 우세', color: 'blue' }
-      : { side: 'con', label: '반대 우세', color: 'red' };
+      ? { label: '찬성 우세', color: 'blue' }
+      : { label: '반대 우세', color: 'red' };
 
   const totalVotes = debate.proCount + debate.conCount;
 
@@ -63,14 +72,14 @@ export function DebateDetailPage() {
           label="찬성"
           ratio={debate.proRatio}
           votes={debate.proCount}
-          summary={debate.content ?? ''}
+          best={best?.pro[0] ?? null}
         />
         <OptionCard
           side="con"
           label="반대"
           ratio={debate.conRatio}
           votes={debate.conCount}
-          summary={debate.content ?? ''}
+          best={best?.con[0] ?? null}
         />
       </div>
       <div className="relative flex items-center">
@@ -115,7 +124,7 @@ export function DebateDetailPage() {
         </span>
       </div>
       <CommentForm />
-      <Comments />
+      <Comments bestProId={best?.pro[0]?.id} bestConId={best?.con[0]?.id} />
     </div>
   );
 }

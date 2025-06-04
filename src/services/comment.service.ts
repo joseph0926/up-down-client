@@ -1,9 +1,11 @@
 import {
+  type BestComments,
   type CommentList,
   CommentListSchema,
   CommentSchema,
   type CreateCommentPayload,
   type CreateCommentRes,
+  parseBestCommentsResponse,
   parseCreateCommentResponse,
   parseLikeCommentResponse,
 } from '@/schemas/comment.schema';
@@ -50,5 +52,17 @@ export async function toggleCommentLike(
   const parsed = parseLikeCommentResponse(data);
   if (!parsed.success) throw new Error(parsed.message);
 
+  return parsed.data;
+}
+
+export async function getBestComments(debateId: string): Promise<BestComments> {
+  CommentSchema.shape.debateId.parse(debateId);
+
+  const { data } = await axiosInstance.get(
+    `/debates/${debateId}/best-comments`,
+  );
+
+  const parsed = parseBestCommentsResponse(data);
+  if (!parsed.success) throw new Error(parsed.message);
   return parsed.data;
 }

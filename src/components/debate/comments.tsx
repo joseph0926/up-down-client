@@ -15,7 +15,13 @@ import { QUERY_KEY } from '@/lib/query-key';
 import { getComments } from '@/services/comment.service';
 import { CommentItem } from './comment-item';
 
-export function Comments() {
+export function Comments({
+  bestProId,
+  bestConId,
+}: {
+  bestProId?: string | null;
+  bestConId?: string | null;
+}) {
   const { debateId } = useParams<{ debateId: string }>();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -99,12 +105,16 @@ export function Comments() {
 
           <TabsContent value="PRO" className="mt-4 space-y-6">
             {deferredTab === 'PRO'
-              ? proComments.map((c) => <CommentItem key={c.id} {...c} />)
+              ? proComments.map((c) => (
+                  <CommentItem key={c.id} {...c} isBest={c.id === bestProId} />
+                ))
               : null}
           </TabsContent>
           <TabsContent value="CON" className="mt-4 space-y-6">
             {deferredTab === 'CON'
-              ? conComments.map((c) => <CommentItem key={c.id} {...c} />)
+              ? conComments.map((c) => (
+                  <CommentItem key={c.id} {...c} isBest={c.id === bestConId} />
+                ))
               : null}
           </TabsContent>
         </Tabs>
@@ -113,12 +123,12 @@ export function Comments() {
       <div className="hidden gap-6 md:grid md:grid-cols-2">
         <div className="space-y-6">
           {proComments.map((c) => (
-            <CommentItem key={c.id} {...c} />
+            <CommentItem key={c.id} {...c} isBest={c.id === bestProId} />
           ))}
         </div>
         <div className="space-y-6">
           {conComments.map((c) => (
-            <CommentItem key={c.id} {...c} />
+            <CommentItem key={c.id} {...c} isBest={c.id === bestConId} />
           ))}
         </div>
       </div>

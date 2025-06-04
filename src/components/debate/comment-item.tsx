@@ -34,6 +34,7 @@ export interface CommentItemProps {
   createdAt: string;
   debateId: string;
   liked: boolean;
+  isBest: boolean;
 }
 
 export const CommentItem = memo(
@@ -46,6 +47,7 @@ export const CommentItem = memo(
     debateId,
     id,
     liked,
+    isBest = false,
   }: CommentItemProps) => {
     const isPro = side === 'PRO';
 
@@ -125,9 +127,17 @@ export const CommentItem = memo(
         className={cn(
           'flex gap-3 rounded-xl border bg-white p-4 shadow-sm dark:border-zinc-700/60 dark:bg-zinc-800/40',
           isPro ? 'md:col-start-1' : 'md:col-start-2',
-          'min-h-[156px]',
+          isBest &&
+            (isPro
+              ? 'border-blue-400/70 bg-blue-50/60 dark:bg-blue-500/10'
+              : 'border-red-400/70 bg-red-50/60 dark:bg-red-500/10'),
         )}
       >
+        {isBest && (
+          <span className="absolute -top-2 left-3 rounded bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-white drop-shadow-sm dark:bg-amber-500">
+            베스트
+          </span>
+        )}
         <div
           className={cn(
             'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white',

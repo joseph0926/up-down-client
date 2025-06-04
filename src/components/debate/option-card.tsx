@@ -1,23 +1,22 @@
-import { ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Quote, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { Comment } from '@/schemas/comment.schema';
 
 export type OptionCardProps = {
   side: 'pro' | 'con';
   label: string;
-  summary: string;
-  icon?: string;
   ratio: number;
   votes: number;
+  best?: Comment | null;
   className?: string;
 };
 
 export function OptionCard({
   side,
   label,
-  summary,
-  icon,
   ratio,
   votes,
+  best,
   className,
 }: OptionCardProps) {
   const isPro = side === 'pro';
@@ -34,18 +33,26 @@ export function OptionCard({
       )}
     >
       <header className="flex items-center gap-2">
-        {icon ? (
-          <img src={icon} alt={label} width={20} height={20} />
-        ) : isPro ? (
+        {isPro ? (
           <ThumbsUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
         ) : (
           <ThumbsDown className="h-4 w-4 text-red-600 dark:text-red-400" />
         )}
         <span className="text-sm font-semibold md:text-base">{label}</span>
       </header>
-      <p className="line-clamp-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-        {summary}
-      </p>
+
+      {best ? (
+        <blockquote className="relative rounded-md p-2 text-[11px] leading-relaxed">
+          <Quote className="absolute top-1 -left-3 h-4 w-4 opacity-30" />
+          <span className="font-semibold">{best.nickname}</span> —{' '}
+          <span className="italic">{best.content}</span>
+        </blockquote>
+      ) : (
+        <p className="line-clamp-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+          아직 베스트 댓글이 존재하지 않습니다.
+        </p>
+      )}
+
       <footer className="mt-auto space-y-1">
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
           <div
